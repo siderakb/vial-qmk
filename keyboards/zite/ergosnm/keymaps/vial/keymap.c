@@ -7,9 +7,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                               KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
   KC_LCTL, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                               KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
   KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                               KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT, 
-  KC_LALT, KC_LGUI, KC_HOME, KC_END,  MO(1),                                                MO(1),   KC_LBRC, KC_RBRC, MO(2),   KC_RSFT,
+  KC_LALT, KC_LGUI, KC_MINS, KC_EQL,  MO(1),                                                MO(1),   KC_LBRC, KC_RBRC, MO(2),   KC_RSFT,
                                                         KC_BTN1, KC_BTN2, KC_BTN3, XXXXXXX,          
-                                                        KC_SPC,  MO(2),   KC_DEL            
+                                                        KC_SPC,  KC_ENT,   KC_DEL            
 ),
 
 [1] = LAYOUT(
@@ -17,7 +17,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_PENT, _______, KC_P7,   KC_P8,   KC_P9,   KC_PPLS,                            KC_MUTE, KC_VOLD, KC_VOLU, KC_F11,  KC_F12,  KC_DEL,
   _______, _______, KC_P4,   KC_P5,   KC_P6,   KC_PMNS,                            KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, KC_INS,
   _______, KC_P0,   KC_P1,   KC_P2,   KC_P3,   KC_PDOT,                            _______, _______, _______, _______, _______, _______,
-  _______, _______, KC_PGUP, KC_PGDN, _______,                                              _______, KC_MINS, KC_EQL,  _______, _______,
+  _______, _______, KC_PGUP, KC_PGDN, _______,                                              _______, KC_HOME, KC_END,  _______, _______,
                                                         _______, _______, _______, _______,
                                                         _______, _______, _______
 ),
@@ -75,25 +75,59 @@ void matrix_init_user(void) {}
 
 void matrix_scan_user(void) {}
 
-#define DRAG_SCROLL MO(1) // Use the mouse movement to scroll instead of moving the cursor .
+/* Use the mouse movement to scroll instead of moving the cursor. */
+#define DRAG_SCROLL MO(1)
+
 #define TRACKBALL_SCROLL_INVERT_V
 // #define TRACKBALL_SCROLL_INVERT_H
 // #define TRACKBALL_SCROLL_SWAP
-#define TRACKABALL_SCROLL_SCALE (1.0)
+
+#define TRACKABALL_SCROLL_SCALE (0.2f)
 #define TRACKABALL_SCROLL_MAX_V (5)
 #define TRACKABALL_SCROLL_MAX_H (5)
+#define TRACKABALL_SCROLL_MIN_V (1)
+#define TRACKABALL_SCROLL_MIN_H (1)
 
 bool set_scrolling = false;
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (set_scrolling) {
+        mouse_report.h = mouse_report.x * TRACKABALL_SCROLL_SCALE;
+        mouse_report.v = mouse_report.y * TRACKABALL_SCROLL_SCALE;
+
 #if defined(TRACKBALL_SCROLL_SWAP)
-        mouse_report.h = mouse_report.y / TRACKABALL_SCROLL_SCALE;
-        mouse_report.v = mouse_report.x / TRACKABALL_SCROLL_SCALE;
-#else
-        mouse_report.h = mouse_report.x / TRACKABALL_SCROLL_SCALE;
-        mouse_report.v = mouse_report.y / TRACKABALL_SCROLL_SCALE;
+        int temp       = mouse_report.h;
+        mouse_report.h = mouse_report.v;
+        mouse_report.v = temp;
 #endif
+
+        if (mouse_report.x > 0) {
+            if (mouse_report.h > TRACKABALL_SCROLL_MAX_H) {
+                mouse_report.h = TRACKABALL_SCROLL_MAX_H;
+            } else if (mouse_report.h < TRACKABALL_SCROLL_MIN_H) {
+                mouse_report.h = TRACKABALL_SCROLL_MIN_H;
+            }
+        } else if (mouse_report.x < 0) {
+            if (mouse_report.h < -TRACKABALL_SCROLL_MAX_H) {
+                mouse_report.h = -TRACKABALL_SCROLL_MAX_H;
+            } else if (mouse_report.h > -TRACKABALL_SCROLL_MIN_H) {
+                mouse_report.h = -TRACKABALL_SCROLL_MIN_H;
+            }
+        }
+
+        if (mouse_report.y > 0) {
+            if (mouse_report.v > TRACKABALL_SCROLL_MAX_V) {
+                mouse_report.v = TRACKABALL_SCROLL_MAX_V;
+            } else if (mouse_report.v < TRACKABALL_SCROLL_MIN_V) {
+                mouse_report.v = TRACKABALL_SCROLL_MIN_V;
+            }
+        } else if (mouse_report.y < 0) {
+            if (mouse_report.v < -TRACKABALL_SCROLL_MAX_V) {
+                mouse_report.v = -TRACKABALL_SCROLL_MAX_V;
+            } else if (mouse_report.v > -TRACKABALL_SCROLL_MIN_V) {
+                mouse_report.v = -TRACKABALL_SCROLL_MIN_V;
+            }
+        }
 
 #if defined(TRACKBALL_SCROLL_INVERT_V)
         mouse_report.v = -mouse_report.v;
@@ -102,18 +136,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 #if defined(TRACKBALL_SCROLL_INVERT_H)
         mouse_report.h = -mouse_report.h;
 #endif
-
-        // if(mouse_report.v > 0 && mouse_report.v > TRACKABALL_SCROLL_MAX_V) {
-        //     mouse_report.v = TRACKABALL_SCROLL_MAX_V;
-        // } else if (mouse_report.v < 0 && mouse_report.v < -TRACKABALL_SCROLL_MAX_V) {
-        //     mouse_report.v = -TRACKABALL_SCROLL_MAX_V;
-        // }
-
-        // if(mouse_report.h > 0 && mouse_report.h > TRACKABALL_SCROLL_MAX_H) {
-        //     mouse_report.h = TRACKABALL_SCROLL_MAX_H;
-        // } else if (mouse_report.h < 0 && mouse_report.h < -TRACKABALL_SCROLL_MAX_H) {
-        //     mouse_report.h = -TRACKABALL_SCROLL_MAX_H;
-        // }
 
         mouse_report.x = 0;
         mouse_report.y = 0;

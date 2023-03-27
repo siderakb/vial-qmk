@@ -33,7 +33,7 @@
 
 /* Pointing device */
 #define PMW33XX_CS_PIN GP21 // SPI CS pin.
-#define PMW33XX_CPI 1600    // The CPI range is 100-12000, in increments of 100. Defaults to 1600 CPI.
+#define PMW33XX_CPI 800    // The CPI range is 100-12000, in increments of 100. Defaults to 1600 CPI.
 #define POINTING_DEVICE_INVERT_Y
 #define POINTING_DEVICE_RIGHT
 #define POINTING_DEVICE_TASK_THROTTLE_MS 10
