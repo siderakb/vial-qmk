@@ -1,11 +1,7 @@
 {
-  "keyboard_name": "ErgoSNM",
-  "manufacturer": "ZiTe",
-  "url": "https://github.com/ziteh",
-  "maintainer": "ZiTe",
+  "keyboard_name": "ErgoSNM Rev.2",
   "usb": {
-    "vid": "0x5A69",
-    "pid": "0xE000",
+    "pid": "0xE200",
     "device_version": "2.1.0"
   },
   "layouts": {

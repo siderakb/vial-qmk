@@ -1,6 +1,7 @@
 # MCU name
 MCU = RP2040
 
+# Bootloader selection
 BOOTLOADER = rp2040
 
 # Build Options
@@ -23,5 +24,3 @@ POINTING_DEVICE_DRIVER = pmw3360
 
 ENCODER_ENABLE = no 
 # ENCODER_MAP_ENABLE = yes
-
-# LTO_ENABLE = yes # Link time optimization, enable to reduce the compiled size of firmware.

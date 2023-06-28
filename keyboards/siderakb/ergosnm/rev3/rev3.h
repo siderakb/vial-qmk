@@ -1,9 +1,5 @@
 #pragma once
 
-#include "quantum.h"
-
-#define XXX KC_NO
-
 // clang-format off
 #define LAYOUT( \
     LA0, LA1, LA2, LA3, LA4, LA5,                RA5, RA4, RA3, RA2, RA1, RA0, \

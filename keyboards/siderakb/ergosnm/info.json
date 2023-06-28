@@ -1,0 +1,8 @@
+{
+  "manufacturer": "SideraKB",
+  "url": "https://github.com/siderakb",
+  "maintainer": "ZiTe",
+  "usb": {
+    "vid": "0x5A69",
+  },
+}

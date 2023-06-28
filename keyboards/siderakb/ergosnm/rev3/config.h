@@ -12,11 +12,6 @@
 #define MATRIX_ROW_PINS_RIGHT { GP29, GP9, GP6, GP4, GP2, NO_PIN }
 #define MATRIX_COL_PINS_RIGHT { GP12, GP18, GP11, GP19, GP25, GP27, NO_PIN, NO_PIN }
 
-/* COL2ROW or ROW2COL */
-#define DIODE_DIRECTION COL2ROW
-
-#define DEBOUNCE 5
-
 /* Encoders. */
 // #define ENCODERS_PAD_A { GP23 }
 // #define ENCODERS_PAD_B { GP18 }
@@ -51,14 +46,3 @@
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_LED GP17
 
-/* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
-
-/* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
-
-/* Limit the number of layers */
-// #define LAYER_STATE_8BIT
-
-/* key combination for command */
-#define IS_COMMAND() (keyboard_report->mods == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT)))
