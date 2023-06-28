@@ -1,11 +1,11 @@
 {
   "keyboard_name": "Calcite52",
-  "manufacturer": "ZiTe",
+  "manufacturer": "SideraKB",
   "url": "https://github.com/ziteh",
   "maintainer": "ZiTe",
   "usb": {
     "vid": "0x5A69",
-    "pid": "0xC000",
+    "pid": "0xC520",
     "device_version": "1.0.0"
   },
   "layouts": {
