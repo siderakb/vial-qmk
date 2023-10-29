@@ -82,60 +82,60 @@ void matrix_scan_user(void) {}
 // #define TRACKBALL_SCROLL_INVERT_H
 // #define TRACKBALL_SCROLL_SWAP
 
-#define TRACKABALL_SCROLL_SCALE (0.2f)
-#define TRACKABALL_SCROLL_MAX_V (5)
-#define TRACKABALL_SCROLL_MAX_H (5)
-#define TRACKABALL_SCROLL_MIN_V (1)
-#define TRACKABALL_SCROLL_MIN_H (1)
+#define TRACKABALL_SCROLL_MAX (3)
+#define TRACKABALL_SCROLL_MIN (1)
+#define SCROLL_DELAY (7)
 
-bool set_scrolling = false;
+bool    set_scrolling = false;
+uint8_t scroll_delay  = 0;
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (set_scrolling) {
-        mouse_report.h = mouse_report.x * TRACKABALL_SCROLL_SCALE;
-        mouse_report.v = mouse_report.y * TRACKABALL_SCROLL_SCALE;
+        if (scroll_delay == 0) {
+            if (mouse_report.x > 18) {
+                mouse_report.h = TRACKABALL_SCROLL_MAX;
+                scroll_delay   = SCROLL_DELAY;
+            } else if (mouse_report.x > 0) {
+                mouse_report.h = TRACKABALL_SCROLL_MIN;
+                scroll_delay   = SCROLL_DELAY;
+            } else if (mouse_report.x < -18) {
+                mouse_report.h = -TRACKABALL_SCROLL_MAX;
+                scroll_delay   = SCROLL_DELAY;
+            } else if (mouse_report.x < 0) {
+                mouse_report.h = -TRACKABALL_SCROLL_MIN;
+                scroll_delay   = SCROLL_DELAY;
+            }
+
+            if (mouse_report.y > 18) {
+                mouse_report.v = TRACKABALL_SCROLL_MAX;
+                scroll_delay   = SCROLL_DELAY;
+            } else if (mouse_report.y > 0) {
+                mouse_report.v = TRACKABALL_SCROLL_MIN;
+                scroll_delay   = SCROLL_DELAY;
+            } else if (mouse_report.y < -18) {
+                mouse_report.v = -TRACKABALL_SCROLL_MAX;
+                scroll_delay   = SCROLL_DELAY;
+            } else if (mouse_report.y < 0) {
+                mouse_report.v = -TRACKABALL_SCROLL_MIN;
+                scroll_delay   = SCROLL_DELAY;
+            }
 
 #if defined(TRACKBALL_SCROLL_SWAP)
-        int temp       = mouse_report.h;
-        mouse_report.h = mouse_report.v;
-        mouse_report.v = temp;
+            int temp       = mouse_report.h;
+            mouse_report.h = mouse_report.v;
+            mouse_report.v = temp;
 #endif
 
-        if (mouse_report.x > 0) {
-            if (mouse_report.h > TRACKABALL_SCROLL_MAX_H) {
-                mouse_report.h = TRACKABALL_SCROLL_MAX_H;
-            } else if (mouse_report.h < TRACKABALL_SCROLL_MIN_H) {
-                mouse_report.h = TRACKABALL_SCROLL_MIN_H;
-            }
-        } else if (mouse_report.x < 0) {
-            if (mouse_report.h < -TRACKABALL_SCROLL_MAX_H) {
-                mouse_report.h = -TRACKABALL_SCROLL_MAX_H;
-            } else if (mouse_report.h > -TRACKABALL_SCROLL_MIN_H) {
-                mouse_report.h = -TRACKABALL_SCROLL_MIN_H;
-            }
-        }
-
-        if (mouse_report.y > 0) {
-            if (mouse_report.v > TRACKABALL_SCROLL_MAX_V) {
-                mouse_report.v = TRACKABALL_SCROLL_MAX_V;
-            } else if (mouse_report.v < TRACKABALL_SCROLL_MIN_V) {
-                mouse_report.v = TRACKABALL_SCROLL_MIN_V;
-            }
-        } else if (mouse_report.y < 0) {
-            if (mouse_report.v < -TRACKABALL_SCROLL_MAX_V) {
-                mouse_report.v = -TRACKABALL_SCROLL_MAX_V;
-            } else if (mouse_report.v > -TRACKABALL_SCROLL_MIN_V) {
-                mouse_report.v = -TRACKABALL_SCROLL_MIN_V;
-            }
-        }
-
 #if defined(TRACKBALL_SCROLL_INVERT_V)
-        mouse_report.v = -mouse_report.v;
+            mouse_report.v = -mouse_report.v;
 #endif
 
 #if defined(TRACKBALL_SCROLL_INVERT_H)
-        mouse_report.h = -mouse_report.h;
+            mouse_report.h = -mouse_report.h;
 #endif
+        } else {
+            scroll_delay--;
+        }
 
         mouse_report.x = 0;
         mouse_report.y = 0;
@@ -145,7 +145,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (keycode == DRAG_SCROLL && record->event.pressed) {
+    if (record->event.pressed && (keycode == DRAG_SCROLL || keycode == KC_MS_BTN3)) {
         set_scrolling = true;
     } else {
         set_scrolling = false;
