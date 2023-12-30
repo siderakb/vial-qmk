@@ -1,7 +1,12 @@
 # MCU name
-MCU = RP2040
+MCU = atmega32u4
+F_CPU = 8000000
+F_USB = $(F_CPU)
+ARCH = AVR8
+BOOTLOADER = caterina
 
-BOOTLOADER = rp2040
+OPT_DEFS += -DINTERRUPT_CONTROL_ENDPOINT
+OPT_DEFS += -DBOOTLOADER_SIZE=4096
 
 # Build Options
 BOOTMAGIC_ENABLE ?= yes	# Virtual DIP switch configuration(+1000)
@@ -15,11 +20,13 @@ BACKLIGHT_ENABLE ?= no  # Enable keyboard backlight functionality
 RGBLIGHT_ENABLE ?= no
 AUDIO_ENABLE ?= no
 
-SPLIT_KEYBOARD = yes
-SERIAL_DRIVER = vendor
+CUSTOM_MATRIX = yes
 
 POINTING_DEVICE_ENABLE = yes
-POINTING_DEVICE_DRIVER = pmw3360
+POINTING_DEVICE_DRIVER = custom
 
 ENCODER_ENABLE = no 
 # ENCODER_MAP_ENABLE = yes
+
+SRC += matrix.c uart.c
+UART_DRIVER_REQUIRED = yes
