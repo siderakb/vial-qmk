@@ -5,7 +5,7 @@
 A split ergonomic keyboard with trackball.
 
 Keyboard Maintainer: [ZiTe](https://github.com/ziteh)  
-Hardware Supported: RP2040  
+Hardware Supported: RP2040 or ATmega32U4  
 Hardware Availability: [ergo-snm-keyboard](https://github.com/siderakb/ergo-snm-keyboard)
 
 Make example for this keyboard (after setting up your build environment):
